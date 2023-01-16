@@ -29,7 +29,7 @@ acc17 <- acc17 %>%
                                      breaks = brks,
                                      labels = 1:5,
                                      include.lowest=T,
-                                     right=F))-.5)
+                                     right=F))-.5) 
 
 write_sf(acc17, 'data/nt_pde_access/grid_acessibilidade17.shp')
 
@@ -39,6 +39,7 @@ pop <- read_csv('data/population_micro_grid2.csv') %>%
                             g2 > g1 & g2 > g3 ~ 'g2',
                             T ~ 'g3')) %>% 
   left_join(grid, by = c('id_grid'='id')) %>% 
+  select(-c(g1, g2, g3)) %>% 
   st_as_sf()
 
 write_sf(pop, 'data/nt_pde_access/grid_familias_por_renda_familiar.shp')
@@ -141,19 +142,21 @@ private_eixos <- eixos %>%
   filter(infraestrutura != 'prevista') %>% 
   sf::st_intersection(acc17) %>% 
   sf::st_intersection(private) %>% 
-  sf::st_drop_geometry()
+  sf::st_drop_geometry() %>% 
+  mutate(min = round(tt_unid*ar_tt_un/(80),0),
+         min_round = round(min/10,0)*10,
+         dif = tt_unid/min-1,
+         dif_round = tt_unid/min_round-1,
+         bate = dif>=0,
+         bate_round = dif_round>=0)%>%
+  select(bate, min, dif, tt_unid, 
+         ano_lan, ar_ut_un)
 
 write_csv(private_eixos, 'data/nt_pde_access/lancamentos_eetus.csv')
 
-# cálculo das áreas das ZEIS em km2
-zeis$area <- units::drop_units(st_area(zeis))/10^6
-
-# interseção entre zeis e o grid
-zeis_acc <- st_intersection(zeis, acc17)
-zeis_acc$area <- units::drop_units(st_area(zeis_acc))
-
-# dos lançamentos, quais estão nas ZEIS de vazios?
-priv_zeis <- st_intersection(private, filter(zeis_acc, zeis %in% c(2,3) & LPUOS == 2016)) %>% 
-  st_drop_geometry()
+# interseção das zeis com a base de lancamentos
+priv_zeis <- st_intersection(private, filter(zeis, zeis %in% c(2,3) & LPUOS == 2016)) %>% 
+  st_drop_geometry() %>% 
+  select(ano_lan, tt_unid, classe, zeis, LPUOS, )
 
 write_csv(priv_zeis, 'data/nt_pde_access/lancamentos_zeis.csv')

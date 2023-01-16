@@ -126,7 +126,6 @@ df1 <- pop %>%
                       labels = c('famílias','acessibilidade'))) %>% 
   rename(value = predom,
          id = id_grid) %>% 
-  select(-c(g1, g2, g3)) %>% 
   group_by(value, var) %>% 
   summarise()
 
@@ -212,14 +211,6 @@ p
 
 # os empreendimentos atingiram o mínimo?
 aux <- emp_eixos %>% 
-  mutate(min = round(tt_unid*ar_tt_un/(80),0),
-         min_round = round(min/10,0)*10,
-         dif = tt_unid/min-1,
-         dif_round = tt_unid/min_round-1,
-         bate = dif>=0,
-         bate_round = dif_round>=0)%>%
-  select(bate, min, dif, tt_unid, 
-         ano_lan, ar_ut_un) %>% 
   group_by(bate, ano_lan) %>% 
   summarise(n=n()) %>% 
   mutate(n=if_else(bate, n, -n)) 
