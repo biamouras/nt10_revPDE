@@ -26,8 +26,6 @@ coord_lim_short <- coord_sf(xlim = c(-46.826081, -46.365377),
 ## opções de fundo dos mapas ----
 basemap <- png::readPNG('data/basemap_short_esri_light_gray_12.png')
 ggbasemap_short <- grid::rasterGrob(basemap, interpolate = T)
-basemap <- png::readPNG('data/basemap_esri_light_gray_12.png')
-ggbasemap <- grid::rasterGrob(basemap, interpolate = T)
 rm(basemap)
 gc()
 
@@ -84,22 +82,22 @@ theme_map <- theme(
 # Carregando os dados ----
 
 ## máscaras ----
-muni <- read_sf("data/shp/Outros_muni-MSP.shp", quiet=T, crs=crsutm) %>% 
+muni <- read_sf("data/Outros_muni-MSP.shp", quiet=T, crs=crsutm) %>% 
   sf::st_transform(crs = crsdegrees) 
 
 ## ZEIS ----
 
-zeis <- read_sf('data/nt_pde_access/zeis.shp')
+zeis <- read_sf('data/zeis.shp')
 
 ## EETU ----
 
-eixos <- read_sf('data/nt_pde_access/eetu.shp')
+eixos <- read_sf('data/eetu.shp')
 
 ## acessibilidade ----
-acc17 <- read_sf('data/nt_pde_access/grid_acessibilidade17.shp')
+acc17 <- read_sf('data/grid_acessibilidade17.shp')
 
 ## população ----
-pop <- read_sf('data/nt_pde_access/grid_familias_por_renda_familiar.shp')
+pop <- read_sf('data/grid_familias_por_renda_familiar.shp')
 
 ## lançamentos dos empreendimentos ----
 # disponibilizado pela Embraesp e organizado pelo CEM
@@ -112,10 +110,10 @@ pop <- read_sf('data/nt_pde_access/grid_familias_por_renda_familiar.shp')
 ## entre 6 a 10 SM - MCMV valor máx 300k 2020  
 
 # interseção entre EETU e os empreendimentos
-emp_eixos <- read_csv('data/nt_pde_access/lancamentos_eetus.csv')
+emp_eixos <- read_csv('data/lancamentos_eetus.csv')
 
 # interseção entre ZEIS e os empreendimentos
-emp_zeis <- read_csv('data/nt_pde_access/lancamentos_zeis.csv')
+emp_zeis <- read_csv('data/lancamentos_zeis.csv')
 
 # Figura 1: Predominância de famílias por classe e acessibilidade a empregos----
 
